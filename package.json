@@ -48,8 +48,8 @@
 		"url": "git+https://github.com/itrocks-ts/data-to-object.git"
 	},
 	"scripts": {
-		"build": "tsc -p tsconfig.json"
+		"build": "tsc"
 	},
 	"types": "./cjs/data-to-object.d.ts",
-	"version": "0.0.1"
+	"version": "0.0.2"
 }
