@@ -1,4 +1,5 @@
 import { ReflectClass }          from '@itrocks/reflect'
+import { toProperty }            from '@itrocks/rename'
 import { RecursiveStringObject } from '@itrocks/request-response'
 import { applyTransformer }      from '@itrocks/transformer'
 import { HTML, IGNORE, INPUT }   from '@itrocks/transformer'
@@ -6,10 +7,11 @@ import { HTML, IGNORE, INPUT }   from '@itrocks/transformer'
 export async function dataToObject<T extends object>(object: T, data: RecursiveStringObject)
 {
 	const properties = new ReflectClass(object).propertyNames
-	for (const property in data) {
-		if (!properties.includes(property)) continue
-		const value = await applyTransformer(data[property], object, property, HTML, INPUT, data)
+	for (const fieldName in data) {
+		const propertyName = toProperty(fieldName)
+		if (!properties.includes(propertyName)) continue
+		const value = await applyTransformer(data[fieldName], object, propertyName, HTML, INPUT, data)
 		if (value === IGNORE) continue
-		object[property] = value
+		object[propertyName] = value
 	}
 }

@@ -5,6 +5,7 @@
 	},
 	"dependencies": {
 		"@itrocks/reflect": "latest",
+		"@itrocks/rename": "latest",
 		"@itrocks/request-response": "latest",
 		"@itrocks/transformer": "latest"
 	},
@@ -51,5 +52,5 @@
 		"build": "tsc"
 	},
 	"types": "./cjs/data-to-object.d.ts",
-	"version": "0.0.2"
+	"version": "0.0.3"
 }
