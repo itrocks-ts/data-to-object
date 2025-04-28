@@ -7,7 +7,11 @@ import { HTML, IGNORE, INPUT }   from '@itrocks/transformer'
 export async function dataToObject<T extends object>(object: T, data: RecursiveStringObject)
 {
 	const properties = new ReflectClass(object).propertyNames
-	for (const fieldName in data) {
+	for (let fieldName in data) {
+		if (fieldName.endsWith('_id')) {
+			fieldName = fieldName.slice(0, -3)
+			if (fieldName in data) continue
+		}
 		const propertyName = toProperty(fieldName)
 		if (!properties.includes(propertyName)) continue
 		const value = await applyTransformer(data[fieldName], object, propertyName, HTML, INPUT, data)
