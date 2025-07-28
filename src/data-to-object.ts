@@ -1,14 +1,14 @@
-import { ReflectClass }          from '@itrocks/reflect'
-import { toProperty }            from '@itrocks/rename'
-import { RecursiveStringObject } from '@itrocks/request-response'
-import { applyTransformer }      from '@itrocks/transformer'
-import { HTML, IGNORE, INPUT }   from '@itrocks/transformer'
+import { ReflectClass }         from '@itrocks/reflect'
+import { toProperty }           from '@itrocks/rename'
+import { RecursiveValueObject } from '@itrocks/request-response'
+import { applyTransformer }     from '@itrocks/transformer'
+import { HTML, IGNORE, INPUT }  from '@itrocks/transformer'
 
-export async function dataToObject<T extends object>(object: T, data: RecursiveStringObject)
+export async function dataToObject<T extends object>(object: T, data: RecursiveValueObject): Promise<T>
 {
 	const properties = new ReflectClass(object).propertyNames
 	for (let fieldName in data) {
-		if (fieldName.endsWith('_id')) {
+		if (fieldName.endsWith('_id') && !(toProperty(fieldName) in object)) {
 			fieldName = fieldName.slice(0, -3)
 			if (fieldName in data) continue
 		}
@@ -18,4 +18,5 @@ export async function dataToObject<T extends object>(object: T, data: RecursiveS
 		if (value === IGNORE) continue
 		object[propertyName] = value
 	}
+	return object
 }
