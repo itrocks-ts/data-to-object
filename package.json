@@ -11,7 +11,7 @@
 	},
 	"description": "Transforms raw string-based data into a business object with type-safe values",
 	"devDependencies": {
-		"typescript": "~5.8"
+		"typescript": "~5.9"
 	},
 	"engines": {
 		"node": ">=18"
@@ -52,5 +52,5 @@
 		"build": "tsc"
 	},
 	"types": "./cjs/data-to-object.d.ts",
-	"version": "0.0.6"
+	"version": "0.0.7"
 }
