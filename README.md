@@ -6,7 +6,7 @@
 
 # data-to-object
 
-Transforms raw string-based data into a business object with type-safe values.
+Transforms raw input data into a business object with type-safe values.
 
 ## Installation
 
@@ -30,35 +30,47 @@ const rawData = {
 }
 
 const user = new User()
-
 await dataToObject(user, rawData)
 
 console.log(user)
-// Output: { name: 'John Doe', age: 30 }
+// { name: 'John Doe', age: 30 }
 ```
 
-## dataToObject Function
+## dataToObject()
 
-Converts raw data (e.g., JSON, web forms) into a business object
-by applying type-appropriate transformations to each property.
+```ts
+dataToObject<T extends object>(object: T, data: RecursiveValueObject): Promise<T>
+```
+
+Converts raw data (JSON payloads, form inputs, query params…) into a business object
+by applying type-aware transformations on each input key that resolves to a property
+declared on the target object.
 
 ### Parameters
 
-- `object` (*T extends object*) – The target object where the transformed values will be assigned.
-- `data` (*[RecursiveStringObject](https://github.com/itrocks-ts/request-response#recursivestringobject)*) – The raw data source with string values.
+- `object`: Target business object to populate.
+- `data`: Raw input data. Values may be strings or already-typed values.\
+  *([RecursiveValueObject](https://github.com/itrocks-ts/request-response#recursivevalueobject))*
 
-### Behavior
+### Behaviour
 
-- Inspect the object's properties.
-- Applies transformations via [@itrocks/transformer](https://github.com/itrocks-ts/transformer#applytransformer)
-  with [HTML and INPUT contexts](https://github.com/itrocks-ts/transformer#constants).
-- Ignores properties that are not present in the target object.
-- Skips properties explicitly marked as
-  [IGNORE](https://github.com/itrocks-ts/transformer#ignoring-a-transformation-result)
-  by the transformer.
+- Only properties **declared on the target object** are assigned.
+- Input keys are normalised from form field to property names using `@itrocks/rename` (`toProperty`).
+- Fields ending with `_id` fall back to their base field name (e.g. `user_id` → `user`)
+  only when the `_id` property does not exist on the target object,
+  and only if the base field name is not already present in the input data.
+- Each value is transformed using its matching transformer
+  ([@itrocks/transformer](https://github.com/itrocks-ts/transformer))
+  with the `HTML` and `INPUT` contexts.
+- The transformer may return a value to be assigned,
+  or mutate the target object directly
+  and return [IGNORE](https://github.com/itrocks-ts/transformer#ignoring-a-transformation-result)
+  to prevent any automatic assignment.
 
-### Example Use Cases
+### Typical use cases
 
-- Processing web form inputs safely (e.g. [@itrocks/save](https://github.com/itrocks-ts/save)).
-- Mapping JSON API responses to strongly-typed objects.
-- Cleaning and sanitizing data before storage or further processing.
+- Processing web form submissions safely.
+- Mapping request payloads to domain objects.
+- Centralising input sanitisation and type coercion.
+
+This function is commonly used by higher-level helpers such as [@itrocks/save](https://github.com/itrocks-ts/save).
