@@ -12,7 +12,7 @@ export async function dataToObject<T extends object>(object: T, data: RecursiveV
 			fieldName = fieldName.slice(0, -3)
 			if (fieldName in data) continue
 		}
-		const propertyName = toProperty(fieldName)
+		const propertyName = toProperty(fieldName) as Extract<keyof T, string>
 		if (!properties.includes(propertyName)) continue
 		const value = await applyTransformer(data[fieldName], object, propertyName, HTML, INPUT, data)
 		if (value === IGNORE) continue
